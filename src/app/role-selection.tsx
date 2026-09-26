@@ -1,31 +1,43 @@
 import { Text, View, Pressable, Alert } from "react-native";
 import { router } from "expo-router";
+
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../services/firebase";
 
 export default function RoleSelectionScreen() {
-  const selectRole = async (role: "mother" | "father") => {
+  const selectRole = async (
+    role: "mother" | "father"
+  ) => {
     try {
       const user = auth.currentUser;
 
       if (!user) {
-        Alert.alert("Error", "Please login again.");
+        Alert.alert(
+          "Error",
+          "Please login again."
+        );
         return;
       }
 
-      await updateDoc(doc(db, "users", user.uid), {
-        role: role,
-      });
+      // Save role in Firestore
+      await updateDoc(
+        doc(db, "users", user.uid),
+        {
+          role: role,
+        }
+      );
 
       console.log("ROLE SAVED:", role);
 
+      // Continue to onboarding
       router.replace("/onboarding");
     } catch (error: any) {
       console.log("ROLE ERROR:", error);
 
       Alert.alert(
         "Error",
-        error?.message || "Could not save role."
+        error?.message ||
+          "Could not save your role."
       );
     }
   };
@@ -37,25 +49,27 @@ export default function RoleSelectionScreen() {
         justifyContent: "center",
         alignItems: "center",
         padding: 24,
-        backgroundColor: "#FFF4E6",
+        backgroundColor: "#F2F0FA",
       }}
     >
       <Text
         style={{
           fontSize: 30,
           fontWeight: "bold",
-          color: "#5C3B28",
-          marginBottom: 15,
+          color: "#25213A",
+          marginBottom: 12,
+          textAlign: "center",
         }}
       >
-        Who are you? ❤️
+        Who are you? ♡
       </Text>
 
       <Text
         style={{
           fontSize: 16,
-          color: "#8B5E3C",
+          color: "#77728A",
           marginBottom: 35,
+          textAlign: "center",
         }}
       >
         This helps us personalize MamaMind.
@@ -63,34 +77,47 @@ export default function RoleSelectionScreen() {
 
       <Pressable
         onPress={() => selectRole("mother")}
-        style={styles.button}
+        style={{
+          width: "100%",
+          backgroundColor: "#5140B5",
+          padding: 18,
+          borderRadius: 14,
+          alignItems: "center",
+          marginBottom: 16,
+        }}
       >
-        <Text style={styles.buttonText}>🤱 I’m a Mother</Text>
+        <Text
+          style={{
+            color: "#FFFFFF",
+            fontSize: 18,
+            fontWeight: "600",
+          }}
+        >
+          🤱 I'm a Mother
+        </Text>
       </Pressable>
 
       <Pressable
         onPress={() => selectRole("father")}
-        style={styles.button}
+        style={{
+          width: "100%",
+          backgroundColor: "#5140B5",
+          padding: 18,
+          borderRadius: 14,
+          alignItems: "center",
+          marginBottom: 16,
+        }}
       >
-        <Text style={styles.buttonText}>👨‍🍼 I’m a Father</Text>
+        <Text
+          style={{
+            color: "#FFFFFF",
+            fontSize: 18,
+            fontWeight: "600",
+          }}
+        >
+          👨‍🍼 I'm a Father
+        </Text>
       </Pressable>
     </View>
   );
 }
-
-const styles = {
-  button: {
-    width: "100%" as const,
-    backgroundColor: "#8B5E3C",
-    padding: 18,
-    borderRadius: 14,
-    alignItems: "center" as const,
-    marginBottom: 16,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold" as const,
-  },
-};
